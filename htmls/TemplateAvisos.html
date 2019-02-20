@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  </head>
+  <body>
+  <div class="block">
+  <div class="block gray"><i style="color:green" class="fas fa-2x fa-grin-alt"></i>  Cerramos en <b style="color:green">5</b> segundos...</div><br>
+  </div>
+  <div class="block">
+  <input class="share" style="width:100%" type="button" value="Cerrar" onclick="google.script.host.close()" >
+  </div>
+  <script>
+  window.onload = function() {
+  setTimeout(function(){
+  google.script.host.close();
+  }, 5000);
+  };
+  </script>
+  </body>
+</html>

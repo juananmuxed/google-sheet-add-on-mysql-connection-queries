@@ -7,6 +7,20 @@ Used in App Script
 
 Nothing, the libreries its in the code (Jquery, and CSS from Google)
 
+# Creating a Google Script in Google Sheets
+
+## Creating the Script
+
+1. Create a Google Script in menu of the Sheet 
+2. Copy and configure "codeAddon.gs" (follow the config)
+
+## Creating the Html in Script
+
+1. File > New > HTML File for every Html archive in the htmls path
+2. Copy the code for each
+3. IMPORTANT: the name of the HTML archive can change, but you need to change it in the "codeAddon.gs"
+
+# Credits
 
 ## Built With
 
@@ -19,7 +33,7 @@ Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c6
 
 ## Author
 
-* **Juan Antonio Sánchez** 
+* **Juan Antonio Sánchez** [MuXeD](http://muxed.es/)
 
 ## License
 

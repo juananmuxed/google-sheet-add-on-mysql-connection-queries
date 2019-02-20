@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <style>button{cursor:pointer}.rojazo{color:red}</style>
+  </head>
+  <body>
+  <div class="sidebar branding-below">
+  <h2>CLICK PARA REFRESCAR</h2>
+  <div class="mensaje"></div>
+  <div class="block botones-refresh" id="botones-refresh"></div>
+  <div class="block"><button style="width: 100%;text-transform:uppercase" class="action" onclick="refrescarTodos()">Todos</button></div>
+  <div class="block"><button style="width: 100%" class="create" onclick="google.script.host.close()">Cancelar</button></div>
+  </div>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script>
+    function añadirrango(listadorango){ 
+    var html = '';
+    for (var x = 0 ; x < listadorango.length ; x++){
+      html+='<div class="block"><button style="width: 100%; text-transform: uppercase" id="'+listadorango[x]+'" class="share" onclick="enviar_dato(this.id)">'+listadorango[x]+'</button></div>';
+    }
+    $('#botones-refresh').html(html);
+    };
+    google.script.run.withSuccessHandler(añadirrango).seleccion();  
+    
+    function enviar_dato(idpulsado){
+    google.script.run.withSuccessHandler(cierra).withFailureHandler(errorenConsulta).refrescar(idpulsado);
+    };
+    
+    function refrescarTodos(){
+    google.script.run.withSuccessHandler(cierra).withFailureHandler(errorenConsulta).refrescarListado();
+    };
+    
+    function errorenConsulta(){
+    $('.mensaje').addClass('rojazo').html('Error en la Consulta');
+    setTimeout(function(){ $('.mensaje').removeClass('rojazo').empty() }, 4000);
+    };
+    
+    function cierra(){
+    google.script.host.close()
+    }
+    
+  </script>
+  </body>
+</html>

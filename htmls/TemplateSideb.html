@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <style>
+    input[type=button],input[type=submit]{cursor:pointer}
+    .rojo{color:red}
+    </style>
+  </head>
+  <body>
+  <div name="formul" class="sidebar branding-below">
+  
+  <h1>Crea una consulta</h1>
+  
+  <div class="block mensajes"></div>
+  
+  <div class="block form-group">
+  <label for="nombre">Nombre</label>
+  <input type="text" name="nombre" id="nombre" style="width: 100%">
+  </div>
+  
+  <div class="block form-group">
+  <label for="tdatos">Tabla para datos</label>
+  <input type="text" name="tdatos" id="tdatos" style="width: 100%">
+  </div>
+  
+  <div class="block form-group">
+  <label for="fmax">Filas Máximas (1-10000)</label>
+  <input type="number" name="fmax" id="fmax" min="1" max="10000" style="width: 100%">
+  </div>
+  
+  <div class="block form-group">
+  <label for="query">SQL Query</label>
+  <textarea name="query" id="query" rows="10" style="width: 100%"></textarea>
+  </div>
+  
+  <div class="block">
+  <input type="submit" value="Insertar" class="action" onclick="enviar_datos()" >
+  <input type="button" value="Cancelar" onclick="google.script.host.close()" >
+  </div>
+
+  </div>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>
+  function enviar_datos(){
+  var valores = [$("input[name=nombre]").val(),$("input[name=tdatos]").val(),$("textarea[name=query]").val(),$("input[name=fmax]").val()];
+  if(valores[0]=="" || valores[1]=="" || valores[2]=="" || valores[3]==""){
+  if(valores[0]==""){$('label[for="nombre"]').addClass('rojo');}else{$('label[for="nombre"]').removeClass('rojo');}
+  if(valores[1]==""){$('label[for="tdatos"]').addClass('rojo');}else{$('label[for="tdatos"]').removeClass('rojo');}
+  if(valores[2]==""){$('label[for="query"]').addClass('rojo');}else{$('label[for="query"]').removeClass('rojo');}
+  if(valores[3]==""){$('label[for="fmax"]').addClass('rojo');}else{$('label[for="fmax"]').removeClass('rojo');}
+  $(".mensajes").html("<h2 class='error'>Rellena el formulario</h2>");
+  }
+  else{
+  google.script.run.withSuccessHandler(enviar).withFailureHandler(errorGeneral).creaciontablas(valores);
+  }
+  };
+  
+  function errorGeneral(){
+  $(".mensajes").html("<h2 class='error'>Error al enviar</h2>");
+    var titulo = "Error";
+    var mensajeError = '<i style="color:red" class="fas fa-2x fa-sad-cry"></i>  La tabla ya existe o la Consulta es erronea, pero la magia de mi melena me perturba. Puedes refrescarla en el menú "Consultas" o revisar la Query.';
+    google.script.run.aviso(titulo,mensajeError);
+  };
+  
+  function enviar(){
+  var titulo = "Consulta Creada";
+  var mensajeError = '<i style="color:green" class="fas fa-2x fa-smile-wink"></i>  La consulta ha sido creada junto a su Tabla. Puedes refrescarla en el menú "Consultas".';
+  google.script.run.aviso(titulo,mensajeError);
+  setTimeout(function(){
+  google.script.host.close()
+  }, 2000);
+  };
+  
+  </script>
+  </body>
+</html>
+
+
