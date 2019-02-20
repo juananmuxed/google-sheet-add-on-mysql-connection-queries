@@ -176,6 +176,7 @@ function refrescar(idpulsado){
   modalrefrescar(idpulsado,contenido);
   var conn = Jdbc.getConnection(dbUrl, user, userPwd);
   var start = new Date();
+  var milstart = start.getTime();
   var statm = conn.createStatement();
   var last = choja.getLastRow();
   var busqueda = choja.getRange(1,1,last,12).getValues();
@@ -223,15 +224,8 @@ function refrescar(idpulsado){
   
   //Date and time of query
   var stop = new Date();
-  var minstop = stop.getMinutes()*60000;
-  var minstart = start.getMinutes()*60000;
-  var segstop = stop.getSeconds()*1000;
-  var segstart = start.getMinutes()*1000;
-  var milstop = stop.getMilliseconds();
-  var milstart = start.getMilliseconds();
-  var stopmili = minstop + segstop + milstop;
-  var startmili = minstart + segstart + milstart;
-  var duracion = stopmili - startmili;
+  var milstop = stop.getTime();
+  var duracion = (milstop - milstart)/1000;
   choja.getRange(1,1,last,8).getCell(lol+1, 6).setValue(stop);
   choja.getRange(1,1,last,8).getCell(lol+1, 8).setValue(duracion);
   var clear = '<div class="block"><i style="color:green" class="fas fa-2x fa-check"></i> Terminado.</div>';
