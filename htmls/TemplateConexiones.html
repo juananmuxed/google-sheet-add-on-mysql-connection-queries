@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <style>button{cursor:pointer}.rojazo{color:red}</style>
+  </head>
+  <body>
+  <div class="sidebar branding-below">
+  <h2>Probar Conexiones</h2>
+  <div class="mensaje"></div>
+  <div class="block botones-connect" id="botones-connect">
+  <div class="block"><button style="width: 100%; text-transform: uppercase" id="default" class="share" onclick="enviar_dato(this.id)">Probar por Defecto</button></div>
+  </div>
+
+  <div class="block"><button style="width: 100%" class="create" onclick="google.script.host.close()">Cancelar</button></div>
+  </div>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script>
+    function addrango(listadorango){ 
+    var html = '';
+    for (var x = 0 ; x < listadorango.length ; x++){
+      html+='<div class="block"><button style="width: 100%; text-transform: uppercase" id="'+listadorango[x]+'" class="share" onclick="enviar_dato(this.id)">Probar '+listadorango[x]+'</button></div>';
+    }
+    $('#botones-connect').append(html);    
+    };
+    
+    function nohayna(){
+    var nohayna = '<div class="block"><h3 class="current">No has creado conexiones</h3></div><div class="block"><button style="width: 100%" class="create" onclick="google.script.run.query()">Crea una consulta</button></div>';
+    $('#botones-connect').html(nohayna);
+    };
+    
+    google.script.run.withSuccessHandler(addrango).withFailureHandler(nohayna).selectserver();   
+    
+    function nohay(){google.script.run.createConnection();}
+    
+    function enviar_dato(prueba){
+    google.script.run.withSuccessHandler(cierra).withFailureHandler(errorenConsulta).pruebaconexion(prueba);
+    };
+    
+    function errorenConsulta(){
+    $('.mensaje').addClass('rojazo').html('Error con la conexión');
+    setTimeout(function(){ $('.mensaje').removeClass('rojazo').empty() }, 4000);
+    google.script.run.aviso('Error','<div class="block"><i style="color:red" class="fas fa-2x fa-sad-cry"></i> Error con la conexión</div>');
+    };
+    
+    function cierra(){
+    google.script.host.close()
+    }
+    
+  </script>
+  </body>
+</html>

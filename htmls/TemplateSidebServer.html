@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <style>
+    input[type=button],input[type=submit]{cursor:pointer}
+    .rojo{color:red}
+    </style>
+  </head>
+  <body>
+  <div name="formul" class="sidebar branding-below">
+  
+  <h1>Crea una conexión</h1>
+  
+  <div class="block mensajes"></div>
+  
+  <div class="block form-group">
+  <label for="nombre">Nombre</label>
+  <input type="text" name="nombre" id="nombre" style="width: 100%">
+  </div>
+  
+  <div class="block form-group">
+  <label for="direccion">Dirección o IP</label>
+  <input type="text" name="direccion" id="direccion" style="width: 100%">
+  </div>
+  
+  <div class="block form-group">
+  <label for="db">Base de datos</label>
+  <input type="text" name="db" id="db" style="width: 100%">
+  </div>
+  
+  <div class="block form-group">
+  <label for="usuario">Usuario</label>
+  <input type="text" name="usuario" id="usuario" style="width: 100%">
+  </div>
+  
+  <div class="block form-group">
+  <label for="pass">Contraseña</label>
+  <input type="text" name="pass" id="pass" style="width: 100%">
+  </div>
+  
+  <div class="block">
+  <input type="submit" value="Insertar" class="action" onclick="enviar_datos()" >
+  <input type="button" value="Cancelar" onclick="google.script.host.close()" >
+  </div>
+
+  </div>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>
+  function enviar_datos(){
+  var valores = [$("input[name=nombre]").val(),$("input[name=direccion]").val(),$("input[name=db]").val(),$("input[name=usuario]").val(),$("input[name=pass]").val()];
+  if(valores[0]=="" || valores[1]=="" || valores[2]=="" || valores[3]=="" || valores[4]==""){
+  if(valores[0]==""){$('label[for="nombre"]').addClass('rojo');}else{$('label[for="nombre"]').removeClass('rojo');}
+  if(valores[1]==""){$('label[for="direccion"]').addClass('rojo');}else{$('label[for="direccion"]').removeClass('rojo');}
+  if(valores[2]==""){$('label[for="db"]').addClass('rojo');}else{$('label[for="db"]').removeClass('rojo');}
+  if(valores[3]==""){$('label[for="usuario"]').addClass('rojo');}else{$('label[for="usuario"]').removeClass('rojo');}
+  if(valores[4]==""){$('label[for="pass"]').addClass('rojo');}else{$('label[for="pass"]').removeClass('rojo');}
+  $(".mensajes").html("<h2 class='error'>Rellena el formulario</h2>");
+  }
+  else{
+  google.script.run.withSuccessHandler(enviar).creaciontablasserver(valores);
+  }
+  };
+  
+  function errorGeneral(){
+  $(".mensajes").html("<h2 class='error'>Error al enviar</h2>");
+    var titulo = "Error";
+    var mensajeError = '<i style="color:red" class="fas fa-2x fa-sad-cry"></i>  La conexión es erronea, pero la magia de mi melena me perturba.';
+    google.script.run.aviso(titulo,mensajeError);
+  };
+  
+  function enviar(){
+  setTimeout(function(){
+  google.script.host.close()
+  }, 2000);
+  };
+  
+  </script>
+  </body>
+</html>

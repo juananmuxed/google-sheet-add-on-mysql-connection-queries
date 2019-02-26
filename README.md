@@ -22,10 +22,11 @@ Nothing, the libreries its in the code (Jquery, and CSS from Google)
 
 # Credits
 
-## Built With
+## Built With (dependencies)
 
 * [CSS GSUITE](https://developers.google.com/gsuite/add-ons/guides/css) - For standard the Style
 * [Jquery](https://jquery.com/) - Jquery
+* [CG CypherJS](https://github.com/brucemcpherson/cCryptoGS) - Bruce Mcphershon Script from CryptoJS in Google Script
 
 ## Contributing
 

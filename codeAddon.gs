@@ -6,6 +6,12 @@ Creative Commons
 Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) 
 https://creativecommons.org/licenses/by-nc/4.0/
 
+Dependencies: 
+
+cCryptoGS by brucemcpherson to encrypt the pass
+http://ramblings.mcpher.com/Home/excelquirks/gassnips/cryptogs
+https://github.com/brucemcpherson/cCryptoGS
+
 ----------------------------------------------------------
 
 Spanish version for menus, you can change as you wish
@@ -23,27 +29,48 @@ var dbUrl = 'jdbc:mysql://' + connectionName + '/' + db;
 // General Vars 
 var ss = SpreadsheetApp.getActiveSpreadsheet();
 
+// Var for cypher with Bruce Script 
+// Change Passphrase and codification (crypted in Rabbit, add/change other Algos to Cifrado.gs)
+var cifrado = new Cipher('pues no es la magia, estupefacientes');
+
 // You can change the name of the Query Data Tab
 var ssmelena = 'MELENA';
+var ssestupe = 'ESTUPEFACIENTES';
+var estupehoja = ss.getSheetByName(ssestupe);
 var choja = ss.getSheetByName(ssmelena);
 var ui = SpreadsheetApp.getUi();
 
-// If you like, onOpen() this function or active with a Triger it as you prefere 
-function menuOpen(){
+// If you like, onOpen() this function or active it as you prefere
+function onOpen(){
   
   ui.createMenu('La magia de mi melena')
   .addItem('Mírala','mira')
-  .addItem('Probar Conexión por Defecto', 'testing')
   .addSeparator()
   .addItem('Crear Query','query')
+  .addItem('Crear Conexión','createConnection')
   .addSeparator()
   .addItem('Consultas','consultas')
+  .addItem('Conexiones','conexiones')
   .addToUi();
-  
 }
 
-// Create Tab to archive Queries configs
-function mira(){
+// Create Connection TAB
+function crearestupehoja(){
+if (!estupehoja){
+    ss.insertSheet(ssestupe);
+    estupehoja = ss.getSheetByName(ssestupe);
+    estupehoja.setFrozenRows(1);
+    // Spanish
+    estupehoja.appendRow(["Nombre","Dirección","Base de Datos","Usuario","Contraseña Cifrada"]);
+    estupehoja.getRange('1:1').setBackground('#333333').setFontColor('#eeeeee').setFontWeight('bold');
+    var titulo = "Hoja creada";
+    var mensajeError = "Mira la magia de mi melena. Apenas he tenido contacto con los estupefacientes.";
+    aviso(titulo,mensajeError);
+  }
+}
+
+// Create Queries TAB
+function crearchoja(){
   if (!choja) {
     ss.insertSheet(ssmelena);
     choja = ss.getSheetByName(ssmelena);
@@ -54,19 +81,38 @@ function mira(){
     var titulo = "Hoja creada";
     var mensajeError = "Mira la magia de mi melena. Apenas he tenido contacto con los estupefacientes.";
     aviso(titulo,mensajeError);
-    SpreadsheetApp.setActiveSheet(ss.getSheetByName(ssmelena));
-  }
-  else{
-    var titulo = "La hoja ya existe";
-    var mensajeError = "La hoja ya existe, pero la magia de mi melena me perturba. Ya te llevo yo, apenas he tenido contacto con los estupefacientes.";
-    aviso(titulo,mensajeError);
-    SpreadsheetApp.setActiveSheet(ss.getSheetByName(ssmelena));
   }
 }
 
-// Test the conection
-function testing(){
-  var pruebadefe = Jdbc.getConnection(dbUrl, user, userPwd).isValid(1000);
+// Create TABS to archive Queries configs
+function mira(){
+  crearestupehoja();
+  crearchoja();
+  if(choja && estupehoja){
+    var titulo = "Las hojas ya existen";
+    var mensajeError = "La hoja ya existe, pero la magia de mi melena me perturba. Apenas he tenido contacto con los estupefacientes.";
+    aviso(titulo,mensajeError);
+  }
+}
+
+// Test connections
+function pruebaconexion(prueba){
+  if(prueba == 'default'){
+    var pruebadefe = Jdbc.getConnection(dbUrl, user, userPwd);
+  }
+  else{
+    var lastserver = estupehoja.getLastRow();
+    var busquedaserver = estupehoja.getRange(1,1,lastserver,6).getValues();
+    for(var rofl = 0 ; rofl < busquedaserver.length ; ++rofl){
+      if (busquedaserver[rofl][0] == prueba){break} ;
+    }
+    var nombre = busquedaserver[rofl][1];
+    var usuario = busquedaserver[rofl][3];
+    var pass = cifrado.decrypt(busquedaserver[rofl][4]);
+    var db = busquedaserver[rofl][2];
+    var urldb = 'jdbc:mysql://' + nombre + '/' + db;
+    var pruebadefe = Jdbc.getConnection(urldb, usuario, pass).isValid(1000);
+  }
   if(pruebadefe){
     var titulo = "Conexión exitosa";
     var mensajeCorrecto = "La conexión está configurada correctamente.";
@@ -91,10 +137,39 @@ function modalrefrescar(titulo,aviso){
 
 // Sidebar for create Query
 function query(){
+  crearchoja();
   var html = HtmlService.createHtmlOutputFromFile('TemplateSideb')
       .setTitle('Introduce datos de la Query')
       .setWidth(300);
   ui.showSidebar(html);
+}
+
+// Sidebar for create connection
+function createConnection(){
+  crearestupehoja();
+  var html = HtmlService.createHtmlOutputFromFile('TemplateSidebServer')
+      .setTitle('Introduce datos de la Conexión')
+      .setWidth(300);
+  ui.showSidebar(html);
+}
+
+// Open connection tab
+function conexiones(){
+  crearestupehoja();
+  var pruebaulti = estupehoja.getLastRow();
+  if (pruebaulti < 2) {
+    SpreadsheetApp.setActiveSheet(estupehoja);
+    createConnection();
+    var titulo = "Sin conexiones";
+    var mensajeCorrecto = "Crea una conexión, solo tienes la configurada por defecto";
+    aviso(titulo,mensajeCorrecto);
+  } else {
+    var html = HtmlService.createHtmlOutputFromFile('TemplateConexiones')
+    .setTitle('Probar Conexiones')
+    .setWidth(300);
+    ui.showSidebar(html);
+    SpreadsheetApp.setActiveSheet(estupehoja);
+  }
 }
 
 // Need to create a list to Refresh
@@ -103,28 +178,83 @@ function seleccion(){
   var rangochan = choja.getRange(2, 1, ultichan-1, 1).getValues();
   var listadorango = [];
   for (var col = 0;col < ultichan-1;col++) {
-       listadorango.push(rangochan[col]);
+    listadorango.push(rangochan[col]);
   }
   return listadorango;
 }
 
+// Pass the list of server
+function selectserver(){
+  var ultiest = estupehoja.getLastRow();
+  var rangoest = estupehoja.getRange(2, 1, ultiest-1, 1).getValues();
+  var listadoserver = [];
+  for (var colt =0; colt < ultiest-1;colt++){
+    listadoserver.push(rangoest[colt]);
+  }
+  return listadoserver;
+}
+
 // Sidebar for Refresh
 function consultas(){
-  var html = HtmlService.createHtmlOutputFromFile('TemplateConsultas')
-      .setTitle('Consultas Guardadas')
-      .setWidth(300);
-  ui.showSidebar(html);
+  crearchoja();
+  var pruebaulti = choja.getLastRow();
+  if (pruebaulti < 2){
+    SpreadsheetApp.setActiveSheet(choja);
+    query();
+    var titulo = "Sin consultas";
+    var mensajeCorrecto = "Crea una consulta.";
+    aviso(titulo,mensajeCorrecto);
+  } else {
+    var html = HtmlService.createHtmlOutputFromFile('TemplateConsultas')
+    .setTitle('Consultas Guardadas')
+    .setWidth(300);
+    ui.showSidebar(html);
+    SpreadsheetApp.setActiveSheet(choja);
+  }  
+}
+
+// Creating a Data for connection 
+function creaciontablasserver(valores){
+  var nombre = valores[0];
+  var direccion = valores[1];
+  var db = valores[2];
+  var usuario = valores[3];
+  var password = valores[4];
+  var passwordenc = cifrado.encrypt(password);
+  var urldb = 'jdbc:mysql://' + direccion + '/' + db;;
+  var conn = Jdbc.getConnection(urldb, usuario, password).isValid(1000);
+  ss.getSheetByName(ssestupe).appendRow([nombre,direccion,db,usuario,passwordenc]);
+  if(conn){
+    var titulo = "Parece que está conectado";
+    var mensajeCorrecto = "Pues parece que chispea";
+    aviso(titulo,mensajeCorrecto);
+  }
 }
 
 // Creating a Tab for a Query and the first Refresh
-function creaciontablas(valores){
+function creaciontablas(valores,server){
   var cdate = new Date();
   var nombretab = valores[1];
   var nombre = valores[0];
   var consulta = valores[2];
   var func = valores[0];
   var filasm = valores[3];
-  var conn = Jdbc.getConnection(dbUrl, user, userPwd);
+  if(server == 'Por defecto'){
+    var conn = Jdbc.getConnection(dbUrl, user, userPwd);
+  }
+  else{
+    var lastserver = estupehoja.getLastRow();
+    var busquedaserver = estupehoja.getRange(1,1,lastserver,6).getValues();
+    for(var rofl = 0 ; rofl < busquedaserver.length ; ++rofl){
+      if (busquedaserver[rofl][0] == server){break} ;
+    }
+    var nombreserver = busquedaserver[rofl][1];
+    var usuario = busquedaserver[rofl][3];
+    var pass = cifrado.decrypt(busquedaserver[rofl][4]);
+    var db = busquedaserver[rofl][2];
+    var urldb = 'jdbc:mysql://' + nombreserver + '/' + db;
+    var conn = Jdbc.getConnection(urldb, usuario, pass);
+  }
   var statm = conn.createStatement();
   statm.setMaxRows(filasm);
   var resultados = statm.executeQuery(consulta);
@@ -157,24 +287,39 @@ function creaciontablas(valores){
     SpreadsheetApp.setActiveSheet(ss.getSheetByName(tabtemp));
   }
 }
-// Refreshing All (work in progress)
-function refrescarListado(){
+// Refreshing All (detected a error in more than 6 queries)
+function refrescarListado(server){
   var last = choja.getLastRow();
   var listado = choja.getRange(2, 1, last, 1).getValues();
   for (var num = 0; num < listado.length-1 ; num++){
     var idEncontrada = listado[num];
-    refrescar(idEncontrada);
+    refrescar(idEncontrada,server);
     Utilities.sleep(1000);
   }
   aviso('¡Boom!','<i style="color:green" class="fas fa-2x fa-bomb"></i>  ¡Boom! ¡Refrescados todos!')
 }
 
 // Refreshing a Saved Query
-function refrescar(idpulsado){
+function refrescar(idpulsado,server){
   // Connect to DB
-  var contenido = '<div class="block"><i style="color:red" class="fas fa-2x fa-sync-alt"></i> Refrescando consulta '+idpulsado+'...</div>';
+  var contenido = '<div class="block"><i style="color:red" class="fas fa-2x fa-sync-alt"></i> Refrescando consulta '+idpulsado+'...</div><div class="block"><i style="color:red" class="fas fa-2x fa-plug"></i> Conectando al server '+server+'...</div>';
   modalrefrescar(idpulsado,contenido);
-  var conn = Jdbc.getConnection(dbUrl, user, userPwd);
+  if(server == 'Por defecto'){
+    var conn = Jdbc.getConnection(dbUrl, user, userPwd);
+  }
+  else{
+    var lastserver = estupehoja.getLastRow();
+    var busquedaserver = estupehoja.getRange(1,1,lastserver,6).getValues();
+    for(var rofl = 0 ; rofl < busquedaserver.length ; ++rofl){
+      if (busquedaserver[rofl][0] == server){break} ;
+    }
+    var nombre = busquedaserver[rofl][1];
+    var usuario = busquedaserver[rofl][3];
+    var pass = cifrado.decrypt(busquedaserver[rofl][4])
+    var db = busquedaserver[rofl][2];
+    var urldb = 'jdbc:mysql://' + nombre + '/' + db;
+    var conn = Jdbc.getConnection(urldb, usuario, pass);
+  }
   var start = new Date();
   var milstart = start.getTime();
   var statm = conn.createStatement();

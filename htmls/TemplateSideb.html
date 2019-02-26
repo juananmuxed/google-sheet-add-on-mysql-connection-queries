@@ -35,6 +35,13 @@
   <textarea name="query" id="query" rows="10" style="width: 100%"></textarea>
   </div>
   
+  <div class="block form-group">
+  <label for="select">Servidor para prueba</label>
+  <select style="width:100%" id="select">
+  <option value="default" selected>Por defecto</option>
+  </select>
+  </div>
+  
   <div class="block">
   <input type="submit" value="Insertar" class="action" onclick="enviar_datos()" >
   <input type="button" value="Cancelar" onclick="google.script.host.close()" >
@@ -53,9 +60,20 @@
   $(".mensajes").html("<h2 class='error'>Rellena el formulario</h2>");
   }
   else{
-  google.script.run.withSuccessHandler(enviar).withFailureHandler(errorGeneral).creaciontablas(valores);
+  var server = $( "#select option:selected" ).text();
+  google.script.run.withSuccessHandler(enviar).withFailureHandler(errorGeneral).creaciontablas(valores,server);
   }
   };
+  
+  function addserver(listadoserver){
+  var seleccionserver = '';
+  for (var y = 0 ; y < listadoserver.length ; y++){
+  seleccionserver+='<option value="'+listadoserver[y]+'">'+listadoserver[y]+'</option>';
+  }
+  $('#select').append(seleccionserver);
+  };
+  
+  google.script.run.withSuccessHandler(addserver).selectserver();
   
   function errorGeneral(){
   $(".mensajes").html("<h2 class='error'>Error al enviar</h2>");
@@ -76,5 +94,3 @@
   </script>
   </body>
 </html>
-
-

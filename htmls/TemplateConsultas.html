@@ -10,26 +10,52 @@
   <h2>CLICK PARA REFRESCAR</h2>
   <div class="mensaje"></div>
   <div class="block botones-refresh" id="botones-refresh"></div>
+  <div class="block form-group">
+  <label for="select">Selecciona servidor</label>
+  <select style="width:100%" id="select">
+    <option value="default" selected>Por defecto</option>
+  </select>
+  </div>
   <div class="block"><button style="width: 100%;text-transform:uppercase" class="action" onclick="refrescarTodos()">Todos</button></div>
   <div class="block"><button style="width: 100%" class="create" onclick="google.script.host.close()">Cancelar</button></div>
   </div>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   <script>
-    function añadirrango(listadorango){ 
+    function addrango(listadorango){ 
     var html = '';
     for (var x = 0 ; x < listadorango.length ; x++){
       html+='<div class="block"><button style="width: 100%; text-transform: uppercase" id="'+listadorango[x]+'" class="share" onclick="enviar_dato(this.id)">'+listadorango[x]+'</button></div>';
     }
-    $('#botones-refresh').html(html);
+    $('#botones-refresh').html(html);    
     };
-    google.script.run.withSuccessHandler(añadirrango).seleccion();  
+    
+    function nohayna(){
+    var nohayna = '<div class="block"><h3 class="current">No has creado consultas</h3></div><div class="block"><button style="width: 100%" class="create" onclick="google.script.run.query()">Crea una consulta</button></div>';
+    $('#botones-refresh').html(nohayna);
+    };
+    
+    function addserver(listadoserver){
+    var seleccionserver = '';
+    for (var y = 0 ; y < listadoserver.length ; y++){
+    seleccionserver+='<option value="'+listadoserver[y]+'">'+listadoserver[y]+'</option>';
+    }
+    $('#select').append(seleccionserver);
+    };
+    
+    google.script.run.withSuccessHandler(addrango).withFailureHandler(nohayna).seleccion();  
+    
+    google.script.run.withSuccessHandler(addserver).selectserver();  
+    
+    function nohay(){google.script.run.query();}
     
     function enviar_dato(idpulsado){
-    google.script.run.withSuccessHandler(cierra).withFailureHandler(errorenConsulta).refrescar(idpulsado);
+    var server = $( "#select option:selected" ).text();
+    google.script.run.withSuccessHandler(cierra).withFailureHandler(errorenConsulta).refrescar(idpulsado,server);
     };
     
     function refrescarTodos(){
-    google.script.run.withSuccessHandler(cierra).withFailureHandler(errorenConsulta).refrescarListado();
+    var server = $( "#select option:selected" ).text();
+    google.script.run.withSuccessHandler(cierra).withFailureHandler(errorenConsulta).refrescarListado(server);
     };
     
     function errorenConsulta(){
