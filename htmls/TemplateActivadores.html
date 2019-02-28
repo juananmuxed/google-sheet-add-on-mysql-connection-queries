@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <style>
+        button {
+            text-transform: uppercase;
+            cursor: pointer
+        }
+
+        .rojazo {
+            color: red
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row m-2">
+            <div class="col col-3"><b>ID Activador</b></div>
+            <div class="col col-3"><b>Consultas</b></div>
+            <div class="col"><b>Frecuencia</b></div>
+            <div class="col col-1"></div>
+        </div>
+        <hr>
+        <div class="contenido">
+            <div class="row m-2">
+                <div class="col col-3">Contenido</div>
+                <div class="col col-3">Contenido</div>
+                <div class="col">Contenido</div>
+                <div class="col col-1"><i style="cursor: pointer" onclick="eliminar();" class="fas fa-times-circle"></i></div>
+            </div>
+        </div>
+        <div class="row m-2">
+            <div class="col errores"></div>
+        </div>
+        <hr>
+        <div class="row m-2">
+            <div class="col">
+                <button class="share w-100" onclick="eliminarTodos();">Eliminar Todos los Activadores</button>
+            </div>
+        </div>
+        <div class="row m-2 pt-2">
+            <div class="col">
+                <button class="action w-100" onclick="enviar_datos();">Guardar</button>
+            </div>
+            <div class="col">
+                <button class="create w-100" onclick="google.script.host.close()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+</body>
+
+</html>

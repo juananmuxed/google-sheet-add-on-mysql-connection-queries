@@ -38,11 +38,10 @@ var ssmelena = 'MELENA';
 var ssestupe = 'ESTUPEFACIENTES';
 var estupehoja = ss.getSheetByName(ssestupe);
 var choja = ss.getSheetByName(ssmelena);
-var ui = SpreadsheetApp.getUi();
 
 // If you like, onOpen() this function or active it as you prefere
 function onOpen(){
-  
+  var ui = SpreadsheetApp.getUi();
   ui.createMenu('La magia de mi melena')
   .addItem('Mírala','mira')
   .addSeparator()
@@ -51,6 +50,8 @@ function onOpen(){
   .addSeparator()
   .addItem('Consultas','consultas')
   .addItem('Conexiones','conexiones')
+  .addItem('Programar consultas', 'scheduling')
+  .addItem('Activadores', 'verActivadores')
   .addToUi();
 }
 
@@ -126,12 +127,39 @@ function aviso(titulo,aviso){
   var html = HtmlService.createHtmlOutputFromFile('TemplateAvisos').getContent();
   contenido+=html;
   var final = HtmlService.createHtmlOutputFromFile('TemplateAvisos').clear().append(contenido).setWidth(400).setHeight(200);
+  var ui = SpreadsheetApp.getUi();
   ui.showModalDialog(final, titulo);
 }
+
+// Schedule dialog
+function scheduling(){
+  var contenido = HtmlService.createHtmlOutputFromFile('TemplateProgramar').setWidth(600).setHeight(300);
+  var ui = SpreadsheetApp.getUi();
+  ui.showModelessDialog(contenido, 'Programar consultas');
+}
+
+// Activators dialog
+function verActivadores(){
+  /* 
+  var triggers = ScriptApp.getProjectTriggers();
+  var cosos = [];
+  var propiedad = "";
+  for(var i =0; i<triggers.length; i++){
+    var uniq = triggers[i].getUniqueId();
+    var sis = scriptProperties.getProperty(uniq);
+    propiedad += JSON.stringify(sis);
+  } 
+  */
+  var contenido = HtmlService.createHtmlOutputFromFile('TemplateActivadores').setWidth(600).setHeight(400);
+  var ui = SpreadsheetApp.getUi();
+  ui.showModelessDialog(contenido, 'Activadores');
+}
+
 
 // Generate a Modal Popup
 function modalrefrescar(titulo,aviso){  
   var final = HtmlService.createHtmlOutputFromFile('TemplateRefresh').append(aviso).setWidth(400).setHeight(200);
+  var ui = SpreadsheetApp.getUi();
   ui.showModalDialog(final, titulo);
 }
 
@@ -141,6 +169,7 @@ function query(){
   var html = HtmlService.createHtmlOutputFromFile('TemplateSideb')
       .setTitle('Introduce datos de la Query')
       .setWidth(300);
+  var ui = SpreadsheetApp.getUi();
   ui.showSidebar(html);
 }
 
@@ -150,6 +179,7 @@ function createConnection(){
   var html = HtmlService.createHtmlOutputFromFile('TemplateSidebServer')
       .setTitle('Introduce datos de la Conexión')
       .setWidth(300);
+  var ui = SpreadsheetApp.getUi();
   ui.showSidebar(html);
 }
 
@@ -167,8 +197,8 @@ function conexiones(){
     var html = HtmlService.createHtmlOutputFromFile('TemplateConexiones')
     .setTitle('Probar Conexiones')
     .setWidth(300);
+    var ui = SpreadsheetApp.getUi();
     ui.showSidebar(html);
-    SpreadsheetApp.setActiveSheet(estupehoja);
   }
 }
 
@@ -208,8 +238,8 @@ function consultas(){
     var html = HtmlService.createHtmlOutputFromFile('TemplateConsultas')
     .setTitle('Consultas Guardadas')
     .setWidth(300);
+    var ui = SpreadsheetApp.getUi();
     ui.showSidebar(html);
-    SpreadsheetApp.setActiveSheet(choja);
   }  
 }
 
@@ -376,4 +406,150 @@ function refrescar(idpulsado,server){
   var clear = '<div class="block"><i style="color:green" class="fas fa-2x fa-check"></i> Terminado.</div>';
   aviso(idpulsado,clear);
   Utilities.sleep(1000);
+}
+
+// Clean All Trigers
+function deleteAllTrigger() {
+  var scriptProperties = PropertiesService.getScriptProperties();
+  var allTriggers = ScriptApp.getProjectTriggers();
+  for (var i = 0; i < allTriggers.length; i++) {
+    ScriptApp.deleteTrigger(allTriggers[i]);
+    scriptProperties.deleteProperty(allTriggers[i]);
+  }
+}
+
+// Create All Triggers
+function crearActivador(datos){
+  var scriptProperties = PropertiesService.getScriptProperties();
+  aviso('Activador guardado','<div class="block"><i style="color:green" class="fas fa-2x fa-grimace"></i> Activador Creado para verlo accede al menú "Activadores".</div>');
+  var metodotemp = datos[1];
+  var horadeldia = datos[2];
+  var diasemana = datos[3];
+  var horas = datos[4];
+  switch(metodotemp){
+    case "hora":
+      var trigger = ScriptApp.newTrigger("manejadorA").timeBased().everyHours(1).create();
+      var ID = trigger.getUniqueId();
+      scriptProperties.setProperty(ID, JSON.stringify(datos));
+      break;
+    case "dia":
+      var trigger = ScriptApp.newTrigger("manejadorA").timeBased().everyDays(1).atHour(horadeldia).create();
+      var ID = trigger.getUniqueId();
+      scriptProperties.setProperty(ID, JSON.stringify(datos));
+      break;
+    case "semana":
+      switch (diasemana){
+        case "Lunes":
+          var trigger = ScriptApp.newTrigger("manejadorA").timeBased().onWeekDay(ScriptApp.WeekDay.MONDAY).create();
+          var ID = trigger.getUniqueId();
+          scriptProperties.setProperty(ID, JSON.stringify(datos));
+        case "Martes":
+          var trigger = ScriptApp.newTrigger("manejadorA").timeBased().onWeekDay(ScriptApp.WeekDay.TUESDAY).create();
+          var ID = trigger.getUniqueId();
+          scriptProperties.setProperty(ID, JSON.stringify(datos));
+        case "Miércoles":
+          var trigger = ScriptApp.newTrigger("manejadorA").timeBased().onWeekDay(ScriptApp.WeekDay.WEDNESDAY).create();
+          var ID = trigger.getUniqueId();
+          scriptProperties.setProperty(ID, JSON.stringify(datos));
+        case "Jueves":
+          var trigger = ScriptApp.newTrigger("manejadorA").timeBased().onWeekDay(ScriptApp.WeekDay.THURSDAY).create();
+          var ID = trigger.getUniqueId();
+          scriptProperties.setProperty(ID, JSON.stringify(datos));
+        case "Viernes":
+          var trigger = ScriptApp.newTrigger("manejadorA").timeBased().onWeekDay(ScriptApp.WeekDay.FRIDAY).create();
+          var ID = trigger.getUniqueId();
+          scriptProperties.setProperty(ID, JSON.stringify(datos));
+        case "Sábado":
+          var trigger = ScriptApp.newTrigger("manejadorA").timeBased().onWeekDay(ScriptApp.WeekDay.SATURDAY).create();
+          var ID = trigger.getUniqueId();
+          scriptProperties.setProperty(ID, JSON.stringify(datos));
+        case "Domingo":
+          var trigger = ScriptApp.newTrigger("manejadorA").timeBased().onWeekDay(ScriptApp.WeekDay.SUNDAY).create();
+          var ID = trigger.getUniqueId();
+          scriptProperties.setProperty(ID, JSON.stringify(datos));
+      }
+      break;
+    case "custom":
+      var trigger = ScriptApp.newTrigger("manejadorA").timeBased().everyHours(horas).create();
+      var ID = trigger.getUniqueId();
+      scriptProperties.setProperty(ID, JSON.stringify(datos));
+      break;
+  }
+}
+
+function manejadorA(e){
+  var scriptProperties = PropertiesService.getScriptProperties();
+  var triggerId = e.triggerUid;
+  var triggers = ScriptApp.getProjectTriggers();
+  for(var i =0; i<triggers.length; i++){
+    if(triggers[i].getUniqueId() == triggerId){
+      var encontrado = scriptProperties.getProperty(triggerId);
+      var lavueltita = JSON.parse(encontrado);
+      break;
+    }
+  }
+  for(var x = 5; x < lavueltita.length; x++){
+    refrescarApa(lavueltita[x],lavueltita[0]);
+  }
+}
+
+// Refreshing outprogram
+function refrescarApa(idpulsado,server){
+  if(server == 'Por defecto'){
+    var conn = Jdbc.getConnection(dbUrl, user, userPwd);
+  }
+  else{
+    var lastserver = estupehoja.getLastRow();
+    var busquedaserver = estupehoja.getRange(1,1,lastserver,6).getValues();
+    for(var rofl = 0 ; rofl < busquedaserver.length ; ++rofl){
+      if (busquedaserver[rofl][0] == server){break} ;
+    }
+    var nombre = busquedaserver[rofl][1];
+    var usuario = busquedaserver[rofl][3];
+    var pass = cifrado.decrypt(busquedaserver[rofl][4])
+    var db = busquedaserver[rofl][2];
+    var urldb = 'jdbc:mysql://' + nombre + '/' + db;
+    var conn = Jdbc.getConnection(urldb, usuario, pass);
+  }
+  var start = new Date();
+  var milstart = start.getTime();
+  var statm = conn.createStatement();
+  var last = choja.getLastRow();
+  var busqueda = choja.getRange(1,1,last,12).getValues();
+  for(var lol = 0 ; lol < busqueda.length ; ++lol){
+    if (busqueda[lol][0] == idpulsado){break} ;
+    }
+  var maximrows = busqueda[lol][8];
+  statm.setMaxRows(maximrows);
+  var query = busqueda[lol][3];
+  var update = busqueda[lol][5];
+  var timeUpdate = busqueda[lol][7];
+  var tab = ss.getSheetByName(busqueda[lol][4]);
+  var resultados = statm.executeQuery(query);
+  var numCols = resultados.getMetaData().getColumnCount();
+  var numRows = tab.getLastRow();
+  tab.getRange(1,1,numRows,numCols).clear({contentsOnly: true});
+  var colNameArr=[[]],valArr=[];
+  for(var col = 0; col < numCols; col++){
+    colNameArr[0].push(resultados.getMetaData().getColumnName(col+1));      
+  }
+  tab.getRange(1, 1, 1, numCols).setValues(colNameArr);
+  while (resultados.next()){
+    var tmpArr = [];
+    var rowString = '';
+    for (var col = 0; col < numCols; col++) {
+      rowString += resultados.getString(col + 1) + '\t';
+      tmpArr.push(resultados.getString(col + 1));
+    }
+    valArr.push(tmpArr);
+  }
+  resultados.close();
+  statm.close();
+  tab.getRange(2, 1 , valArr.length, numCols).setValues(valArr);
+  var stop = new Date();
+  var milstop = stop.getTime();
+  var duracion = (milstop - milstart)/1000;
+  choja.getRange(1,1,last,8).getCell(lol+1, 6).setValue(stop);
+  choja.getRange(1,1,last,8).getCell(lol+1, 8).setValue(duracion);
+  choja.getRange(1,1,last,11).getCell(lol+1, 11).setValue("Refrescado con Activador").setBackground("green");
 }

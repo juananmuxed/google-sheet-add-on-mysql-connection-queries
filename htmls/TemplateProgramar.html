@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <style>
+        button {
+            text-transform: uppercase;
+            cursor: pointer
+        }
+
+        .rojazo {
+            color: red
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row m-2">
+            <div class="col">
+                <label for="laide"><b>Consultas</b></label>
+                <div id="consultascheck">
+                </div>
+            </div>
+            <div class="col timeperiod">
+                <label for="radio"><b>Periodo</b></label>
+                <div>
+                    <input type="radio" name="periodo" id="hora" value="hora">
+                    <label for="hora">Cada hora</label>
+                </div>
+                <div id="dia">
+                    <input type="radio" name="periodo" id="dia" value="dia">
+                    <label for="dia">Cada día</label>
+                </div>
+                <div id="semana">
+                    <input type="radio" name="periodo" id="semana" value="semana">
+                    <label for="semana">Cada semana</label>
+                </div>
+                <div id="bloquecustom">
+                    <input type="radio" name="periodo" id="custom" value="custom">
+                    <label for="custom">Personalizado</label>
+                </div>
+            </div>
+        </div>
+        <div class="row m-2">
+            <div class="col">
+                <label for="servidor"><b>Servidor</b></label>
+                <select class="w-100" name="servidor" id="server">
+                    <option value="default" selected>Por defecto</option>
+                </select>
+            </div>
+        </div>
+        <div class="row m-2">
+            <div class="col errores"></div>
+        </div>
+        <div class="row m-2 pt-2">
+            <div class="col">
+                <button class="share w-100" onclick="limpiarformulario();">Limpiar formulario</button>
+            </div>
+        </div>
+        <div class="row m-2 pt-2">
+            <div class="col">
+                <button class="action w-100" onclick="enviar_datos();">Guardar</button>
+            </div>
+            <div class="col">
+                <button class="create w-100" onclick="google.script.host.close()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script>
+        function addrango(listadorango) {
+            var html = '';
+            for (var x = 0; x < listadorango.length; x++) {
+                html += '<div><input type="checkbox" id="' + listadorango[x] + '" value="' + listadorango[x] + '" name="consultas"><label for="laide">' + listadorango[x] + '</label></div>';
+            }
+            $('#consultascheck').html(html);
+        };
+
+        function nohayna() {
+            var nohayna = '<div class="block"><h3 class="current">No has creado consultas</h3></div><div class="block"><button class="create w-100" onclick="google.script.run.query()">Crea una consulta</button></div>';
+            $('#consultascheck').html(nohayna);
+        };
+
+        function addserver(listadoserver) {
+            var seleccionserver = '';
+            for (var y = 0; y < listadoserver.length; y++) {
+                seleccionserver += '<option value="' + listadoserver[y] + '">' + listadoserver[y] + '</option>';
+            }
+            $('#server').append(seleccionserver);
+        };
+
+        google.script.run.withSuccessHandler(addrango).withFailureHandler(nohayna).seleccion();
+
+        google.script.run.withSuccessHandler(addserver).selectserver();
+
+        function limpiarformulario() {
+            $('input:checkbox').removeAttr('checked');
+            $('input:radio').removeAttr('checked');
+            $(".bloquecustom").remove();
+            $(".semana").remove();
+            $(".dia").remove();
+            $('.errores').html('<div class="text-success">Formulario limpito.</div>')
+            setTimeout(function () { $('.errores').empty() }, 3000);
+        };
+
+        $("input[name=periodo]").change(function () {
+            if ($("input[id=custom]").is(':checked')) { $("#bloquecustom").append('<div class="w-100 bloquecustom">Cada <select class="w-25" id="customtext" name="customtext"><option value=2 selected>2</option><option value=4>4</option><option value=6>6</option><option value=8>8</option><option value=12>12</option></select> horas</div>'); }
+            else { $(".bloquecustom").remove(); }
+            if ($("input[id=semana]").is(':checked')) { $("#semana").append('<div class="w-100 mb-2 semana">Cada <select class="w-75" id="diasemana" name="diasemana"><option selected>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option><option>Sábado</option><option>Domingo</option></select></div>'); }
+            else { $(".semana").remove(); }
+            if ($("input[id=dia]").is(':checked')) { $("#dia").append('<div class="w-100 mb-2 dia">A las <input class="w-25" type="number" min=1 max=24 name="customdia" value=1> horas</div>'); }
+            else { $(".dia").remove(); }
+        })
+
+        function enviar_datos() {
+            var datos = [];
+            var server = $("#server option:selected").text();
+            var temp = $("input[name=periodo]:checked").val();
+            datos.push(server);
+            datos.push(temp);
+            if ($('.dia')[0]) {
+                var horadeldia = $("input[name=customdia]").val();
+                datos.push(horadeldia);
+            } else {
+                datos.push("0");
+            }
+            if ($('.semana')[0]) {
+                var diasemana = $("#diasemana option:selected").text();
+                datos.push(diasemana);
+            } else {
+                datos.push("0");
+            }
+            if ($('.bloquecustom')[0]) {
+                var horasperson = $("#customtext option:selected").val();
+                datos.push(horasperson);
+            } else {
+                datos.push("0");
+            }
+            $("input:checkbox[name=consultas]:checked").each(function () { datos.push($(this).val()) });
+            if (!datos[1] || !datos[5]) {
+                if (!datos[5]) { $('label[for=laide]').addClass('rojazo'); } else { $('label[for=laide]').removeClass('rojazo'); }
+                if (!datos[1]) { $('.timeperiod').addClass('rojazo'); } else { $('.timeperiod').removeClass('rojazo'); }
+                $(".errores").html("<h2 class='error'>Selecciona las opciones</h2>");
+            }
+            else {
+                google.script.run.withSuccessHandler(cierra).withFailureHandler(errorenConsulta).crearActivador(datos);
+            }
+        };
+
+        function errorenConsulta() {
+            $('.errores').addClass('rojazo').html('Error en la Consulta');
+            setTimeout(function () { $('.errores').removeClass('rojazo').empty() }, 4000);
+            google.script.run.aviso('Error', '<div class="block"><i style="color:red" class="fas fa-2x fa-sad-cry"></i> Error en la consulta</div>');
+        };
+
+        function cierra() {
+            google.script.host.close()
+        }
+
+    </script>
+</body>
+
+</html>
