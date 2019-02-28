@@ -551,5 +551,5 @@ function refrescarApa(idpulsado,server){
   var duracion = (milstop - milstart)/1000;
   choja.getRange(1,1,last,8).getCell(lol+1, 6).setValue(stop);
   choja.getRange(1,1,last,8).getCell(lol+1, 8).setValue(duracion);
-  choja.getRange(1,1,last,11).getCell(lol+1, 11).setValue("Refrescado con Activador").setBackground("green");
+  choja.getRange(1,1,last,11).getCell(lol+1, 11).setValue("Refrescado con Activador").setBackground("green").setFontColor("white");
 }
