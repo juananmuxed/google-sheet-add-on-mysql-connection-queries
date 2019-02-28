@@ -140,21 +140,10 @@ function scheduling(){
 
 // Activators dialog
 function verActivadores(){
-  /* 
-  var triggers = ScriptApp.getProjectTriggers();
-  var cosos = [];
-  var propiedad = "";
-  for(var i =0; i<triggers.length; i++){
-    var uniq = triggers[i].getUniqueId();
-    var sis = scriptProperties.getProperty(uniq);
-    propiedad += JSON.stringify(sis);
-  } 
-  */
   var contenido = HtmlService.createHtmlOutputFromFile('TemplateActivadores').setWidth(600).setHeight(400);
   var ui = SpreadsheetApp.getUi();
   ui.showModelessDialog(contenido, 'Activadores');
 }
-
 
 // Generate a Modal Popup
 function modalrefrescar(titulo,aviso){  
@@ -443,30 +432,37 @@ function crearActivador(datos){
           var trigger = ScriptApp.newTrigger("manejadorA").timeBased().onWeekDay(ScriptApp.WeekDay.MONDAY).create();
           var ID = trigger.getUniqueId();
           scriptProperties.setProperty(ID, JSON.stringify(datos));
+          break;
         case "Martes":
           var trigger = ScriptApp.newTrigger("manejadorA").timeBased().onWeekDay(ScriptApp.WeekDay.TUESDAY).create();
           var ID = trigger.getUniqueId();
           scriptProperties.setProperty(ID, JSON.stringify(datos));
+          break;
         case "Miércoles":
           var trigger = ScriptApp.newTrigger("manejadorA").timeBased().onWeekDay(ScriptApp.WeekDay.WEDNESDAY).create();
           var ID = trigger.getUniqueId();
           scriptProperties.setProperty(ID, JSON.stringify(datos));
+          break;
         case "Jueves":
           var trigger = ScriptApp.newTrigger("manejadorA").timeBased().onWeekDay(ScriptApp.WeekDay.THURSDAY).create();
           var ID = trigger.getUniqueId();
           scriptProperties.setProperty(ID, JSON.stringify(datos));
+          break;
         case "Viernes":
           var trigger = ScriptApp.newTrigger("manejadorA").timeBased().onWeekDay(ScriptApp.WeekDay.FRIDAY).create();
           var ID = trigger.getUniqueId();
           scriptProperties.setProperty(ID, JSON.stringify(datos));
+          break;
         case "Sábado":
           var trigger = ScriptApp.newTrigger("manejadorA").timeBased().onWeekDay(ScriptApp.WeekDay.SATURDAY).create();
           var ID = trigger.getUniqueId();
           scriptProperties.setProperty(ID, JSON.stringify(datos));
+          break;
         case "Domingo":
           var trigger = ScriptApp.newTrigger("manejadorA").timeBased().onWeekDay(ScriptApp.WeekDay.SUNDAY).create();
           var ID = trigger.getUniqueId();
           scriptProperties.setProperty(ID, JSON.stringify(datos));
+          break;
       }
       break;
     case "custom":
@@ -477,6 +473,7 @@ function crearActivador(datos){
   }
 }
 
+// Used to interact with the Script Propierties archived when create the trigger 
 function manejadorA(e){
   var scriptProperties = PropertiesService.getScriptProperties();
   var triggerId = e.triggerUid;
