@@ -16,6 +16,8 @@ https://github.com/brucemcpherson/cCryptoGS
 
 Spanish version for menus, you can change as you wish
 
+-- V. 0.4 --
+
 */
 
 //Connection Default Preferences

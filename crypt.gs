@@ -4,6 +4,9 @@
  * @param {String} pass passphrase to use for encrypting
  * @param {String} optAlgo default AES
  * @return {CryptoGS} self
+
+ -- V. 0.4 --
+
  */
 
 function Cipher (pass) {
