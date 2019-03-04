@@ -3,7 +3,8 @@
 
 <head>
     <base target="_top">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
@@ -28,13 +29,7 @@
             <div class="col col-1"></div>
         </div>
         <hr>
-        <div class="contenido">
-            <div class="row m-2">
-                <div class="col col-3">Contenido</div>
-                <div class="col col-3">Contenido</div>
-                <div class="col">Contenido</div>
-                <div class="col col-1"><i style="cursor: pointer" onclick="eliminar();" class="fas fa-times-circle"></i></div>
-            </div>
+        <div class="contenido" style="font-size:10px">
         </div>
         <div class="row m-2">
             <div class="col errores"></div>
@@ -42,19 +37,66 @@
         <hr>
         <div class="row m-2">
             <div class="col">
-                <button class="share w-100" onclick="eliminarTodos();">Eliminar Todos los Activadores</button>
+                <button class="share w-100"
+                    onclick="google.script.run.withSuccessHandler(cerrar).withFailureHandler(erroraco).deleteAllTrigger();">Eliminar
+                    Todos los Activadores</button>
             </div>
         </div>
         <div class="row m-2 pt-2">
             <div class="col">
-                <button class="action w-100" onclick="enviar_datos();">Guardar</button>
-            </div>
-            <div class="col">
-                <button class="create w-100" onclick="google.script.host.close()">Cancelar</button>
+                <button class="create w-100" onclick="google.script.host.close();">Cancelar</button>
             </div>
         </div>
     </div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script>
+        function colocaActivadores(datos) {
+            for (var x = 0; x < datos.length; x += 2) {
+                if (x != 0) { $(".contenido").append("<hr>"); }
+                var datosString = datos[x + 1].replace(/"/g, '').replace(/\]/g, '').replace(/\[/g, '');
+                datosString = datosString.split(',');
+                var frecuencia = "";
+                switch (datosString[1]) {
+                    case "dia":
+                        frecuencia = "Diario: cada día a las " + datosString[2] + " horas";
+                        break;
+                    case "hora":
+                        frecuencia = "Cada hora";
+                        break;
+                    case "semana":
+                        frecuencia = "Semanal: cada " + datosString[3];
+                        break;
+                    case "custom":
+                        frecuencia = "Personalizado: cada " + datosString[4] + " horas";
+                        break;
+                }
+                var consultas = "";
+                for (var y = 5; y < datosString.length; y++) {
+                    consultas += (datosString[y] + "<br>");
+                }
+                var cosaparacopiar = '<div class="row m-2"><div class="col col-3">' + datos[x] + '</div><div class="col col-3">' + consultas + '</div><div class="col">' + frecuencia + '</div><div class="col col-1"><i style="cursor: pointer" onclick="google.script.run.withSuccessHandler(cerrar).withFailureHandler(erroraco).eliminar(' + datos[x] + ');" class="fas fa-times-circle"></i></div></div>';
+                $(".contenido").append(cosaparacopiar);
+            }
+        };
+
+        google.script.run.withSuccessHandler(colocaActivadores).withFailureHandler(sinactivadores).recogerActivadores();
+
+        function sinactivadores() {
+            var nohayna = '<div class="block"><h3 class="current">No has Activadores</h3></div><div class="block"><button style="width: 100%" class="create" onclick="google.script.run.scheduling()">Crea un Activador</button></div>';
+            $('#botones-refresh').html(nohayna);
+        };
+
+        function erroraco() {
+            $('.errores').addClass('rojazo').html('Error al eliminar');
+            setTimeout(function () { $('.mensaje').removeClass('rojazo').empty() }, 4000);
+            google.script.run.aviso('Error', '<div class="block"><i style="color:red" class="fas fa-2x fa-sad-cry"></i> Error al eliminar el disparador.</div>');
+        }
+
+        function cerrar() {
+            google.script.host.close()
+        };
+
+    </script>
 </body>
 
 </html>

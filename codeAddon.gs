@@ -392,18 +392,62 @@ function refrescar(idpulsado,server){
   var duracion = (milstop - milstart)/1000;
   choja.getRange(1,1,last,8).getCell(lol+1, 6).setValue(stop);
   choja.getRange(1,1,last,8).getCell(lol+1, 8).setValue(duracion);
+  choja.getRange(1,1,last,11).getCell(lol+1, 11).setValue("Refrescado Manual: "+stop).setBackground("orange").setFontColor("white");
   var clear = '<div class="block"><i style="color:green" class="fas fa-2x fa-check"></i> Terminado.</div>';
   aviso(idpulsado,clear);
   Utilities.sleep(1000);
+}
+
+// Take Triggers from Script Propierties
+function recogerActivadores(){
+  var triggers = ScriptApp.getProjectTriggers();
+  var keys = PropertiesService.getScriptProperties().getKeys();
+  var datos = PropertiesService.getScriptProperties().getProperties();
+  var totalScript = [];
+  for (var i = 0; i < triggers.length; i++){
+    var ID = triggers[i].getUniqueId();
+    for (var x = 0; x < keys.length; x++ ){
+      if (ID == keys[x]){
+        totalScript.push(ID);
+        totalScript.push(datos[ID]);
+      }
+    }
+  }
+  return totalScript;
+}
+
+// Delete 1 Trigger
+function eliminar(ID){
+  var aviso = 'Con esto borrará el activador '+ID+'. ¿Está seguro que desea continuar?';
+  var titulo = 'Eliminar Activador'+ID;
+  var ui = SpreadsheetApp.getUi(); 
+  var response = ui.alert(titulo,aviso, ui.ButtonSet.YES_NO);
+  if (response == ui.Button.YES){
+    var allTriggers = ScriptApp.getProjectTriggers();
+    for (var i = 0; i < allTriggers.length; i++){
+      if(allTriggers[i].getUniqueId() == ID){
+        ScriptApp.deleteTrigger(allTriggers[i]);
+        var propiedadesScript = PropertiesService.getScriptProperties();
+        propiedadesScript.deleteProperty(allTriggers[i].getUniqueId());
+      }
+    }
+  }
+  verActivadores();
 }
 
 // Clean All Trigers
 function deleteAllTrigger() {
   var scriptProperties = PropertiesService.getScriptProperties();
   var allTriggers = ScriptApp.getProjectTriggers();
-  for (var i = 0; i < allTriggers.length; i++) {
-    ScriptApp.deleteTrigger(allTriggers[i]);
-    scriptProperties.deleteProperty(allTriggers[i]);
+  var aviso = 'Con esto borrará todas los activadores creados. ¿Está seguro que desea continuar?';
+  var titulo = 'Eliminar todos los Activadores';
+  var ui = SpreadsheetApp.getUi(); 
+  var response = ui.alert(titulo,aviso, ui.ButtonSet.YES_NO);
+  if (response == ui.Button.YES){
+    for (var i = 0; i < allTriggers.length; i++) {
+      ScriptApp.deleteTrigger(allTriggers[i]);
+      scriptProperties.deleteProperty(allTriggers[i].getUniqueId());
+    }
   }
 }
 
@@ -548,5 +592,5 @@ function refrescarApa(idpulsado,server){
   var duracion = (milstop - milstart)/1000;
   choja.getRange(1,1,last,8).getCell(lol+1, 6).setValue(stop);
   choja.getRange(1,1,last,8).getCell(lol+1, 8).setValue(duracion);
-  choja.getRange(1,1,last,11).getCell(lol+1, 11).setValue("Refrescado con Activador").setBackground("green").setFontColor("white");
+  choja.getRange(1,1,last,11).getCell(lol+1, 11).setValue("Refrescado con Activador: "+stop).setBackground("green").setFontColor("white");
 }
