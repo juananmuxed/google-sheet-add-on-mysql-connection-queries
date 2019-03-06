@@ -16,15 +16,17 @@ Nothing, the libreries its in the code (Jquery, and CSS from Google)
 
 ## Creating the Html in Script
 
-1. File > New > HTML File for every Html archive in the htmls path
+1. File > New > HTML File for every Html file in the htmls path
 2. Copy the code for each
-3. IMPORTANT: the name of the HTML archive can change, but you need to change it in the "codeAddon.gs"
+3. IMPORTANT: the name of the HTML file can change, but you need to change it in the "codeAddon.gs"
 
 # Credits
 
 ## Built With (dependencies)
 
 * [CSS GSUITE](https://developers.google.com/gsuite/add-ons/guides/css) - For standard the Style
+* [FontAwesome](https://fontawesome.com/) - Icons
+* [Bootstrap](https://getbootstrap.com/) - Some Styles for reduce code
 * [Jquery](https://jquery.com/) - Jquery
 * [CG CypherJS](https://github.com/brucemcpherson/cCryptoGS) - Bruce Mcphershon Script from CryptoJS in Google Script
 
