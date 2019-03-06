@@ -26,6 +26,7 @@ var user = 'user'; // User
 var userPwd = 'pass'; // Password
 var db = 'database'; // Database
 // This type of connection can change, this is configurated in MySQL, and change getConnection() function
+// If you use other Subprotocol change here too jdbc:<subprotocol>
 var dbUrl = 'jdbc:mysql://' + connectionName + '/' + db;
 
 // General Vars 
@@ -113,6 +114,7 @@ function pruebaconexion(prueba){
     var usuario = busquedaserver[rofl][3];
     var pass = cifrado.decrypt(busquedaserver[rofl][4]);
     var db = busquedaserver[rofl][2];
+    // If you use other Subprotocol change here too jdbc:<subprotocol>
     var urldb = 'jdbc:mysql://' + nombre + '/' + db;
     var pruebadefe = Jdbc.getConnection(urldb, usuario, pass).isValid(1000);
   }
@@ -242,6 +244,7 @@ function creaciontablasserver(valores){
   var usuario = valores[3];
   var password = valores[4];
   var passwordenc = cifrado.encrypt(password);
+  // If you use other Subprotocol change here too jdbc:<subprotocol>
   var urldb = 'jdbc:mysql://' + direccion + '/' + db;;
   var conn = Jdbc.getConnection(urldb, usuario, password).isValid(1000);
   ss.getSheetByName(ssestupe).appendRow([nombre,direccion,db,usuario,passwordenc]);
@@ -273,6 +276,7 @@ function creaciontablas(valores,server){
     var usuario = busquedaserver[rofl][3];
     var pass = cifrado.decrypt(busquedaserver[rofl][4]);
     var db = busquedaserver[rofl][2];
+    // If you use other Subprotocol change here too jdbc:<subprotocol>
     var urldb = 'jdbc:mysql://' + nombreserver + '/' + db;
     var conn = Jdbc.getConnection(urldb, usuario, pass);
   }
@@ -338,6 +342,7 @@ function refrescar(idpulsado,server){
     var usuario = busquedaserver[rofl][3];
     var pass = cifrado.decrypt(busquedaserver[rofl][4])
     var db = busquedaserver[rofl][2];
+    // If you use other Subprotocol change here too jdbc:<subprotocol>
     var urldb = 'jdbc:mysql://' + nombre + '/' + db;
     var conn = Jdbc.getConnection(urldb, usuario, pass);
   }
@@ -551,6 +556,7 @@ function refrescarApa(idpulsado,server){
     var usuario = busquedaserver[rofl][3];
     var pass = cifrado.decrypt(busquedaserver[rofl][4])
     var db = busquedaserver[rofl][2];
+    // If you use other Subprotocol change here too jdbc:<subprotocol>
     var urldb = 'jdbc:mysql://' + nombre + '/' + db;
     var conn = Jdbc.getConnection(urldb, usuario, pass);
   }
