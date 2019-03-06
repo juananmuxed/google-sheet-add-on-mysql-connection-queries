@@ -16,9 +16,9 @@ Nothing, the libreries its in the code (Jquery, and CSS from Google)
 
 ## Creating the Html in Script
 
-1. File > New > HTML File for every Html archive in the htmls path
+1. File > New > HTML File for every Html file in the htmls path
 2. Copy the code for each
-3. IMPORTANT: the name of the HTML archive can change, but you need to change it in the "codeAddon.gs"
+3. IMPORTANT: the name of the HTML file can change, but you need to change it in the "codeAddon.gs"
 
 # Credits
 
